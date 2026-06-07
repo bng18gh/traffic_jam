@@ -1,4 +1,5 @@
 \documentclass[conference]{IEEEtran}
+\usepackage{hyperref}
 \IEEEoverridecommandlockouts
 % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
 \usepackage{cite}
@@ -39,39 +40,40 @@ or Math in Paper Title or Abstract.
 component, formatting, style, styling, insert
 \end{IEEEkeywords}
 
-\section{Introduction}
-This document is a model and instructions for \LaTeX.
-Please observe the conference page limits. 
+\section{Motivation}
+Traffic management is a key issue in autonomous vehicle driving. Every vehicle runs on its own planned trajectory based on global path planner algorithms, while also implementing obstacle avoidance through local path planning. However, oftentimes the obstacles in question are other vehicles, who are each also running through the same planning and obstacle avoidance. Interaction with other vehicles for safe traffic management is a key part of human driving, such as at freeway ramps or intersections, where cars will need to move from one place to another and ultimately coincide or collide with the path of another vehicle if nothing is done. The goal of this project is to implement a flocking control algorithm based on the implementations seen in [1]. This algorithm allows vehicles to act in a networked manner and is an example of the results of vehicle to vehicle communication. By maintaining awareness of the other vehicles as well as parameters such as speed, trajectory, and collision distance, this algorithm attempts to allow the vehicles to continue moving towards their desired destination with proper obstacle interaction with minimal time delay, avoiding collisions and staying safe.
 
-\section{Ease of Use}
+\section{Simulation Environment}
+The Matlab Autonomous Driving Toolbox is used to create a classic interaction environment for these vehicles – a lane merge. Merging lanes requires the key metrics desired from the motivation section, including vehicle merging trajectories, maintaining an ideal speed, and preventing collision with vehicles on the same path. 
 
-\subsection{Maintaining the Integrity of the Specifications}
+In the visual examples provided in the GitHub repository, the network sets up a three lane road environment where one of the lanes is ending, and places a vehicle in each lane. The goal of the vehicles is to maintain their path forward without colliding with any other vehicles with as little interaction as needed to keep the algorithm light. What this essentially means is that the vehicle not in the disappearing lane or the merging lane will not need to be interacted with and it can continue on its path. 
 
-The IEEEtran class file is used to format your paper and style the text. All margins, 
-column widths, line spaces, and text fonts are prescribed; please do not 
-alter them. You may note peculiarities. For example, the head margin
-measures proportionately more than is customary. This measurement 
-and others are deliberate, using specifications that anticipate your paper 
-as one part of the entire proceedings, and not as an independent document. 
-Please do not revise any of the current designations.
+Each car will self display its speed and merging state behavior, as well as other specific metrics based on the applicable control algorithm. The visual examples present in this code portfolio are used to demonstrate the effects of the control algorithms visually, and a separate script will handle the numerical data calculation.  
 
-\section{Prepare Your Paper Before Styling}
-Before you begin to format your paper, first write and save the content as a 
-separate text file. Complete all content and organizational editing before 
-formatting. Please note sections \ref{AA}--\ref{SCM} below for more information on 
-proofreading, spelling and grammar.
 
-Keep your text and graphic files separate until after the text has been 
-formatted and styled. Do not number text heads---{\LaTeX} will do that 
-for you.
+\section{Methodology and Implementation}
+This paper evaluates the performance of two algorithms, which are being called the “baseline” algorithm and the control barrier function quadratic program “CBF-QP” algorithm. Each of these algorithms will complete the lane merging task at the most basic level, but the difference is how they choose to accomplish it. 
 
-\subsection{Abbreviations and Acronyms}\label{AA}
-Define abbreviations and acronyms the first time they are used in the text, 
-even after they have been defined in the abstract. Abbreviations such as 
-IEEE, SI, MKS, CGS, ac, dc, and rms do not have to be defined. Do not use 
-abbreviations in the title or heads unless they are unavoidable.
+\subsection{Baseline Algorithm}\label{AA}
+The baseline algorithm implements a right of way and yield based system, treating each car as a separate object rather than a combined network. Evaluation of merge availability begins at the control line, placed at a distance before the lane disappears to allow time for a safe merge. At the control line, each vehicle is evaluated for priority based on its right of way rules. When the merging lanes are side by side as in the visual example, the right of way goes to the vehicle that arrives at the control line first, or the furthest left lane if arrival times are the same. If the merging lanes are not side by side, the leftmost lane is always given priority. The other vehicle is then chosen to yield, which slows it down. 
 
-\subsection{Units}
+Once yield behavior has been decided, the yielding vehicle continuously checks the merge lane to see if it is safe to merge into the new lane. This is done by evaluating whether the vehicle is further away than the safety horizon dictated in the simulation parameters. While the vehicle remains unsafe to merge, it stays in its lane and slows down to the unsafe yield speed marked in the parameters to extend the size of the gap until it is safe to merge. Figure 1 shows the vehicles during this yield behavior, during which the merging yellow car is deliberately slowing down to extend the gap between it and the orange car. 
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.5\textwidth]{Fig1.png}}
+\caption{Baseline Algorithm Yielding Behavior}
+\label{fig}
+\end{figure}
+
+The vehicle must successfully merge before the match line, as that is the point where the lane disappears. Additionally, after the match line the trailing vehicle begins speeding up to match the speed of the vehicle in front of it and begins following along the same path. Figure 2 shows this acceleration behavior beyond the match line, as the orange and yellow cars now share a lane and nominal speeds.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.5\textwidth]{Fig2.png}}
+\caption{Baseline Algorithm Matching Behavior}
+\label{fig}
+\end{figure}
+
+\subsection{CBF-QP Algorithm}
 \begin{itemize}
 \item Use either SI (MKS) or CGS as primary units. (SI units are encouraged.) English units may be used as secondary units (in parentheses). An exception would be the use of English units as identifiers in trade, such as ``3.5-inch disk drive''.
 \item Avoid combining SI and CGS units, such as current in amperes and magnetic field in oersteds. This often leads to confusion because equations do not balance dimensionally. If you must use mixed units, clearly state the units for each quantity that you use in an equation.
@@ -248,8 +250,11 @@ citation first, followed by the original foreign-language citation \cite{b6}.
 \begin{thebibliography}{00}
 \bibitem{b1} T. Ibuki, S. Wilson, J. Yamauchi, M. Fujita and M. Egerstedt, "Optimization-Based Distributed Flocking Control for Multiple Rigid Bodies," in IEEE Robotics and Automation Letters, vol. 5, no. 2, pp. 1891-1898, April 2020, doi: 10.1109/LRA.2020.2969950.
 \end{thebibliography}
-\vspace{12pt}
-\color{red}
-IEEE conference templates contain guidance text for composing and formatting conference papers. Please ensure that all template text is removed from your conference paper prior to submission to the conference. Failure to remove the template text from your paper may result in your paper not being published.
+
+\section*{Appendix}
+The Github source code repository can be found at: 
+\href{https://github.com/bng18gh/traffic\_jam}{GitHub Repository}
+
+The demo video can be found at: 
 
 \end{document}
