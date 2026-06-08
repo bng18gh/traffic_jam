@@ -15,6 +15,14 @@ unsafeYieldSpeed: Target speed for merging vehicle if not safe to merge, impleme
 
 
 ## cbf_three_to_two_merge_supervised.m
-hi there again
+Visual depiction of the CBF-QP merging algorithm. Setup includes three lanes and three vehicles. The farmost right lane disappears, and so the rightmost car needs to merge into the middle lane.  
+The CBF-QP algorithm uses a distance barrier, sensing other vehicles inside its range to determine if it is safe to merge. Simply run the program to obersve the merging vehicle behavior. A "good" run is indicated by the merging vehicle completing its merge by the match line without colliding with another vehicle. Also returns graph of the minimum distance detected between any two cars and the minimum distance between the vehicles interacting during the merge (the CBF pair).
+
+#### Consider tuning these variables to alter the merging performance:
+collisionRadius: Size of the distance barrier used to evaluate safety. Also sets the following distance once merge has been completed. Tune as desired to oberve how close the merge behavior can be.  
+cbfGamma: Affects how closely merging vehicles can get before being pushed away. When observing the minimum distance graph, larger gamma values will sharply approach the collision radius before being moved back. Smaller gamme values do not have this dip, but will take longer to converter to the following distance set by collisionRadius.  
+vMax: Maximum nominal speed of the vehicles. Affects simulation and merge completion time.  
+
+
 ## run_merge_controller_metrics.m
 sup
