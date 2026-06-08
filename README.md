@@ -25,4 +25,9 @@ vMax: Maximum nominal speed of the vehicles. Affects simulation and merge comple
 
 
 ## run_merge_controller_metrics.m
-sup
+Numerical data anaysis of both the baseline and CBF algorithms with two test cases: two cars in the middle lane with one merging in, or one car in the middle lane with two cars merging in. For each of the four test case pairs, performance is evaluated by completion time, collision indications, near miss indications, car trhoughput per minute, CBF-QP failures (where applicable), CBF intervention strength, and mean merge time. Program returns a table of all of these metrics based on the parameters set by the user.
+
+#### Consider tuning these variables to alter the performance:
+All of the previously mentioned parameters can be tuned again to evaluate its performance numerically as well as visually. Additionally:  
+collisionRadius: Still used in the CBF algorithm to set the distance barrier, but also acts as the distance marker to evaluate what gets considered a "collision" by the program. The default sets this high on purpose to maximize vehicle safety, but can be placed closer if tighter merges are desired.  
+nearMissRadius: Acts as the distance marker to evaluate what gets considered a "near miss" by the program. Ensure this is set at higher than the collision radius. Can also be tuned tighter if closer merges are desired – the near miss marker is only there as an indicator that vehicles are approaching dangerous states that might spill over into passing the collision radius.
